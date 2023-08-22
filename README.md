@@ -22,7 +22,7 @@ To obtain this functionality next external libraries are used:
 7. sshtunnel [Docs](https://pypi.org/project/sshtunnel/)
 
 ## Documentation
-Read the documentation files to review the [general logic](docs_general.txt), description of main [functionality](docs_functionality.txt) 
-and [database management](docs_database.txt).
+Read the documentation files to review the [general logic](docs/docs_general.txt), description of main [functionality](docs/docs_functionality.txt) 
+and [database management](docs/docs_database.txt).
 
 
