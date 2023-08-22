@@ -2,7 +2,7 @@
 .cache
 dbconfig.py
 
-# Virtual environment
+# Directories
 /spotygovenv/
 /Downloads/
 /backup/

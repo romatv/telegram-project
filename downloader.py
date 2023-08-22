@@ -2,13 +2,14 @@ import os
 import shutil
 from datetime import datetime
 
+from dotenv import load_dotenv
 import spotipy
 from spotipy.oauth2 import SpotifyOAuth
 
 from pytube import Search, YouTube
 from mutagen.mp4 import MP4
 
-
+load_dotenv()
 SPOTIPY_CLIENT_ID = os.getenv('SPOTIPY_CLIENT_ID')
 SPOTIPY_CLIENT_SECRET = os.getenv('SPOTIPY_CLIENT_SECRET')
 SPOTIPY_REDIRECT_URI = os.getenv('SPOTIPY_REDIRECT_URI')
@@ -145,6 +146,3 @@ def start_download_operation(playlist_id: str, playlist_type: str):
         download_song(files_path, song, playlist_id)
     print('Operation completed!')
     create_zipfile(name=playlist_id, folder_path=files_path)
-
-
-

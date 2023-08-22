@@ -1,22 +1,11 @@
 import os
+from datetime import datetime
 
 import sshtunnel
 import MySQLdb
 from abc import ABC
 
-# from dbconfig import config
-from datetime import datetime
 
-
-# ssh_host = config['ssh_host']
-# ssh_port = config['ssh_port']
-# ssh_user = config['ssh_user']
-# ssh_pass = config['ssh_pass']
-#
-# host = config['host']
-# user = config['user']
-# password = config['password']
-# db_name = config['database']
 ssh_host = os.getenv('SSH_HOST')
 ssh_port = os.getenv('SSH_PORT')
 ssh_user = os.getenv('SSH_USER')
