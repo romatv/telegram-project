@@ -1,0 +1,27 @@
+# Project specific
+.cache
+dbconfig.py
+
+# Virtual environment
+/spotygovenv/
+/Downloads/
+/backup/
+/telegram-project/
+
+# Python specific
+.pyc
+.pyo
+__pycache__/
+
+# Environment specific
+.env
+
+# PyCharm specific
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# Editor settings (optional, adjust as needed)
+*.editorconfig
+*.settings/
