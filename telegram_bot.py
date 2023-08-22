@@ -1,14 +1,15 @@
+import os
 import re
 
 import telebot
 
-# noinspection PyUnresolvedReferences
-import settings
 from downloader import start_download_operation, delete_files
+from database_operations import (initialize_user_operation, add_total_downloads, is_limit_reached,
+                                 find_restriction_date, restriction_message_creator)
 from telegram_bot_messages import *
-from database_operations import *
 
-
+# load_dotenv() function is called while importing first functions from downloader
+# so no need to call it again.
 TELEBOT_API_TOKEN = os.getenv('TELEBOT_API_TOKEN')
 
 bot = telebot.TeleBot(TELEBOT_API_TOKEN)
@@ -43,6 +44,7 @@ def handle_messages(message):
 
     If the message is correct url link, starts downloading songs and sends zip file to user
     """
+
     chat_id = message.chat.id
 
     if message.entities:
@@ -86,11 +88,5 @@ def handle_messages(message):
     print('Ended operation with chat_id: ', chat_id)
 
 
-
 if __name__ == '__main__':
     bot.infinity_polling()
-
-
-
-
-
