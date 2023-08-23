@@ -23,6 +23,7 @@ To obtain this functionality next external libraries are used:
 
 ## Documentation
 Read the documentation files to review the [general logic](docs/docs_general.txt), description of main [functionality](docs/docs_functionality.txt) 
-and [database management](docs/docs_database.txt).
+and [database management](docs/docs_database.txt).  
+If you want to start bot on local server, look [here](docs/docs_server.txt).
 
 
