@@ -1,0 +1,180 @@
+--------------------------------------------------------------------------------
+
+
+                                Running BOT on local server
+
+
+This bot is used more effectively while running on  local server build from tdlib.
+It allows increased limit of file size up to 2000mb.
+
+Cuurent server is built in PythonAnywhere.com service.
+It does not allow sudo and apt commands, so you have to install it locally,
+as well as build hash library 'gperf' manually.
+
+
+Use following steps to build the server:
+Refer to build setup from website https://tdlib.github.io/telegram-bot-api/build.html?os=Linux.
+Main docs - https://github.com/tdlib/telegram-bot-api
+Use script for ubuntu 20, g++, local/bin.
+--------------------------------------------------------------------------------
+To begin with - enter bash terminal.
+I. Clone repository of Tdlib.
+$ git clone --recursive https://github.com/tdlib/telegram-bot-api.git
+$ cd telegram-bot-api
+--------------------------------------------------------------------------------
+II. Build the server
+$ rm -rf build
+$ mkdir build
+$ cd build
+$ cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX:PATH=$HOME ..
+$ cmake --build . --target install
+$ cd ../..
+
+So on this step with first cmake command next error will be received, so the build won't be complete.
+Error:
+Could NOT find gperf.  Add path to gperf executable to PATH environment
+  variable or specify it manually using GPERF_EXECUTABLE option, i.e.  'cmake
+  -DGPERF_EXECUTABLE:FILEPATH="<path to gperf executable>"
+
+The error message indicates that the gperf executable (GNU gperf)
+is not found in your system's PATH, and the build process is unable to locate it.
+PythonAnywhere doesn't allow installing and compile C packages via SUDO and apt-pkg,
+so we have to install them
+manually in .local folder.
+Next steps are provided by PA FAQ as instructions to compile C programs.
+https://help.pythonanywhere.com/pages/CompilingCPrograms/
+
+1. First visit the gperf download page:
+https://www.gnu.org/software/gperf/
+and download source code (gperf-3.1.tar.gz) file.
+2. Upload it to PythoAnywhere files.
+3. Extract downloaded file using next commands:
+$ tar -xvzf gperf-3.1.tar.gz
+4. Move to folder with extracted file:
+$ cd gperf-3.1
+5. Use prefix to indicate that build will be installed in our local home directory:
+$ ./configure --prefix=/home/$HOME/.local or ./configure --prefix=$HOME/.local
+
+(Note, you have to cd in gperf-3.1 folder)
+
+Here's what each part of the command means:
+
+./configure: This command runs configure script that comes with the
+source code of the software. Configure script is responsible for preparing
+the build process and checking dependencies.
+
+--prefix=/home/$HOME/.local: This flag specifies the installation
+prefix directory for the software. In this case, it's set to $HOME/.local,
+which means the software will be installed under the .local directory within
+your home directory ($HOME refers to your home directory).
+
+6. Run 'make' command.
+$ make
+
+After success, you will see something like this:
+make[1]: Entering directory '/home/User/gperf/gperf-3.1/lib'
+make[1]: Nothing to be done for 'all'.
+make[1]: Leaving directory...
+If you see this output, it suggests that the software has already been built or processed successfully.
+
+7. Run make install command
+$ make install
+or make install prefix=$HOME/.local if first doesn't work.
+
+8. You can check if it's installed by running
+$ grepf --version
+or
+$ which grepf
+
+9. Add next line to .bashrc configuration file of bash console to set PATH,
+that will be ready each time bash console is activated:
+$ export PATH=$PATH:$HOME/.local/bin
+$ source ~/.bashrc
+
+--------------------------------------------------------------------------------
+10. Retry building with CMake:
+
+$ cd telegram-bot-api
+$ rm -rf build
+$ mkdir build
+$ cd build
+$ cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX:PATH=$HOME -DGPERF_EXECUTABLE:FILEPATH=$HOME/.local/bin/gperf ..
+$ cmake --build . --target install
+$ cd ../..
+
+This will start process of building the server.
+It takes around 30 minutes and around 400 mbs of space.
+
+--------------------------------------------------------------------------------
+
+12. To finally run server use next steps:
+Install environmental variables constantly for bash console:
+For Bash: .bashrc file.
+In this file write
+export TELEGRAM_API_ID="12345"
+export TELEGRAM_API_HASH="12345"
+
+Then use command to start server.
+
+$HOME/bin/telegram-bot-api --api-id $TELEGRAM_API_ID --api-hash $TELEGRAM_API_HASH --local &
+
+I used & marker in the end to run process in the background, otherwise it blocks the console input.
+
+--local flag will create local server which will increase the size limit to 2000mb for files.
+
+13. To start server and check local IP:
+$ hostname -I
+10.0.0.226 172.17.0.1
+Local IP adress - and docker conatiner address.
+
+or use
+$ ip addr show
+and find value of inet.
+
+But to connect locally you will be able to use IP 0.0.0.0:8081,
+port 8081 is default lsitening port of telegram api bot server.
+
+15. To check out what ports are listened by server use
+$ ss -tuln
+or
+$ ss -tuln | grep 8081
+
+--------------------------------------------------------------------------------
+
+To terminate server:
+Find the process ID (PID) of the running telegram-bot-api server.
+You can use the ps command to list the running processes:
+
+$ ps
+or
+$ ps aux | grep telegram-bot-api
+
+This will display a list of processes containing the string "telegram-bot-api" along with their corresponding PIDs.
+
+Identify the process you want to stop based on its PID.
+
+Use the kill command to send a termination signal to the process. Replace <PID> with the actual PID you identified:
+
+$ kill 123
+
+--------------------------------------------------------------------------------
+
+Adjusting code of pytelegrambotapi to run commands through new local server.
+So, by default pytelegrambotapi is calling to api.telegram.org, to change it use next code block:
+
+# When using local telegram bot api server, include next parameters to run all
+# functions through local server's IP:
+
+# from telebot import apihelper
+# apihelper.API_URL = 'http://0.0.0.0:8081/bot{0}/{1}'
+# apihelper.FILE_URL = 'http://0.0.0.0:8081'
+
+
+# Incldue next function to log out from bot, before switching between servers.
+# For example if you ran your bot from IDE without local server, to start it on local server,
+frist you will have to logout your bot from current session.
+
+# def log_out_function():
+#     return bot.log_out()
+
+

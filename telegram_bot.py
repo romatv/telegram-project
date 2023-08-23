@@ -12,7 +12,20 @@ from telegram_bot_messages import *
 # so no need to call it again.
 TELEBOT_API_TOKEN = os.getenv('TELEBOT_API_TOKEN')
 
+# When using local telegram bot api server, include next parameters to run all
+# functions through server's IP:
+# from telebot import apihelper
+# apihelper.API_URL = 'http://0.0.0.0:8081/bot{0}/{1}'
+# apihelper.FILE_URL = 'http://0.0.0.0:8081'
+# print(apihelper.API_URL)
+#
+# Incldue next function to log out from bot, before switching between servers.
+# def log_out_function():
+#     return bot.log_out()
+# additional info on server is in docs/docs_server.txt
+
 bot = telebot.TeleBot(TELEBOT_API_TOKEN)
+
 
 print('Telegram bot SpotyGo is now running.')
 
@@ -62,7 +75,7 @@ def handle_messages(message):
                     try:
                         start_download_operation(playlist_id, playlist_type)
 
-                        with open(f'./Downloads/{playlist_id}/{playlist_id}.zip', mode='rb') as file:
+                        with open(f'./Downloads/archives/{playlist_id}.zip', mode='rb') as file:
                             bot.send_document(chat_id, file)
 
                         bot.send_message(chat_id, successful_download_message)
@@ -72,7 +85,7 @@ def handle_messages(message):
                         print('Error when downloading and sending file', error)
                         bot.send_message(chat_id, 'Sorry, there was an error. The file is too big to send')
                     finally:
-                        delete_files(f'./Downloads/{playlist_id}')
+                        delete_files(playlist_id)
                 else:
                     restriction_date = find_restriction_date(chat_id=chat_id)
                     msg = restriction_message_creator(username=message.chat.username,
@@ -89,4 +102,6 @@ def handle_messages(message):
 
 
 if __name__ == '__main__':
+
     bot.infinity_polling()
+
