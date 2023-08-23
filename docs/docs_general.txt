@@ -82,6 +82,7 @@ telegram_bot_messages.py - messages templates for telegram_bot.
 docs_general.txt         - general project documentation.
 docs_functionality.txt   - documentation on usage of libraries and functions.
 docs_database.txt        - documentation on database management.
+docs_server.txt          - documentation on starting local server on remote hosting.
 requirements.txt         - pip requirements file.
 
 --------------------------------------------------------------------------------
@@ -91,4 +92,4 @@ Tasks to complete:
 - delete files if download was unsuccessful or broken infinity polling.
 - name playlist file as actual playlist name.
 - add protection from too many messages sent.
-- add protection from infinite playlists. Maybe limit the playlist size to 200 items.
+- add protection from infinite playlists. Maybe limit the playlist size.
