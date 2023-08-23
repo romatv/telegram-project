@@ -22,16 +22,24 @@ sp = spotipy.Spotify(auth_manager=SpotifyOAuth(client_id=SPOTIPY_CLIENT_ID,
                                                scope=SCOPE))
 
 
-def create_zipfile(name: str, folder_path: str):
+def create_zipfile(name: str):
     """Creates ZIP archive with all downloaded songs, log.txt and saves it into the folder"""
 
-    shutil.make_archive(base_name=folder_path + f'/{name}', format='zip', root_dir=folder_path)
+    shutil.make_archive(base_name=f'./Downloads/archives/{name}',
+                        format='zip',
+                        root_dir=f'./Downloads/{name}',
+                        base_dir='./')
 
 
-def delete_files(folder_path: str):
-    """Deletes all downloaded files and their folder."""
+def delete_files(playlist_id: str):
+    """Deletes all downloaded files and their folder besides archives folder."""
 
-    shutil.rmtree(folder_path)
+    if os.path.exists(f'./Downloads/{playlist_id}'):
+        shutil.rmtree(f'./Downloads/{playlist_id}')
+
+    if os.path.exists(f'./Downloads/archives/{playlist_id}.zip'):
+        if os.path.isfile(f'./Downloads/archives/{playlist_id}.zip'):
+            os.remove(f'./Downloads/archives/{playlist_id}.zip')
 
 
 def get_songs_list(playlist_id: str, marker: str) -> list:
@@ -103,7 +111,7 @@ def update_metadata(file_path: str, artist: str, song_name: str):
     audio.save()
 
 
-def download_song(path: str, song_name: str, playlist_id: str):
+def download_song(file_path: str, song_name: str):
     """ Downloads audio streams from YouTube and writes results into Log file.
 
     Downloads mp4 file named as song_name into a folder named as playlist_id.
@@ -111,18 +119,18 @@ def download_song(path: str, song_name: str, playlist_id: str):
     """
 
     downloaded_file_name = f'{song_name}.mp4'
-    if not os.path.exists(f'{path}/{downloaded_file_name}'):
-        with open(f'{path}/log-{playlist_id}.txt', mode='a', encoding='UTF-8') as file:
-            file.write(f'{datetime.utcnow()} UTC\n')
+    if not os.path.exists(f'{file_path}/{downloaded_file_name}'):
+        with open(f'{file_path}/log.txt', mode='a', encoding='UTF-8') as file:
+            file.write(f'{datetime.utcnow().isoformat(" ", "seconds")} UTC\n')
 
             try:
                 # Get url of the first video in search with song_name and download its max quality audio stream.
                 youtube = YouTube(get_song_url(song_name))
                 audio_stream = youtube.streams.get_audio_only()
-                audio_stream.download(filename=downloaded_file_name, output_path=path)
+                audio_stream.download(filename=downloaded_file_name, output_path=file_path)
                 file.write(f'{downloaded_file_name} downloaded!\n')
                 # Update metadata of file such as artist name and song name.
-                update_metadata(file_path=f'{path}/{downloaded_file_name}',
+                update_metadata(file_path=f'{file_path}/{downloaded_file_name}',
                                 artist=song_name.split('-')[0],
                                 song_name=song_name.split('-')[1])
             except Exception as error:
@@ -140,9 +148,11 @@ def start_download_operation(playlist_id: str, playlist_type: str):
 
     final_songs_list = get_songs_list(playlist_id, playlist_type)
     files_path = f'./Downloads/{playlist_id}'
-    os.makedirs(files_path, exist_ok=True)  # Creates a new folder in a project path if it doesn't exist.
+    archive_path = './Downloads/archives'
+    os.makedirs(files_path, exist_ok=True)
+    os.makedirs(archive_path, exist_ok=True)
     print('Commence of downloading operation.')
     for song in final_songs_list:
-        download_song(files_path, song, playlist_id)
+        download_song(files_path, song)
     print('Operation completed!')
-    create_zipfile(name=playlist_id, folder_path=files_path)
+    create_zipfile(name=playlist_id)
