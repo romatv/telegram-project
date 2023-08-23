@@ -42,21 +42,21 @@ class GetDataOperations(DatabaseOperations):
 
     @select_excpetions_handler
     def chatid_exists(self):
-        query = f'SELECT EXISTS (SELECT 1 FROM users WHERE chat_id = %s)'
+        query = 'SELECT EXISTS (SELECT 1 FROM users WHERE chat_id = %s)'
         self._cursor.execute(query, (self._chat_id,))
         result = self._cursor.fetchone()[0]
         return result
 
     @select_excpetions_handler
     def get_downloads_number(self):
-        query = f'SELECT downloads FROM users WHERE chat_id = %s'
+        query = 'SELECT downloads FROM users WHERE chat_id = %s'
         self._cursor.execute(query, (self._chat_id,))
         result = self._cursor.fetchone()[0]
         return result
 
     @select_excpetions_handler
     def get_restriction_date(self):
-        query = f'SELECT date_of_restriction FROM users WHERE chat_id = %s'
+        query = 'SELECT date_of_restriction FROM users WHERE chat_id = %s'
         self._cursor.execute(query, (self._chat_id,))
         result = self._cursor.fetchone()[0]
         return result
@@ -81,7 +81,7 @@ class ModifyDataOperations(DatabaseOperations):
 
     @modify_excpetions_handler
     def add_chat_id(self):
-        query = f'INSERT INTO users (chat_id) VALUES (%s)'
+        query = 'INSERT INTO users (chat_id) VALUES (%s)'
         self._cursor.execute(query, (self._chat_id,))
         self._connection.commit()
 
