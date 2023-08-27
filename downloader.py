@@ -111,7 +111,7 @@ def update_metadata(file_path: str, artist: str, song_name: str):
     audio.save()
 
 
-def download_song(file_path: str, song_name: str):
+def download_song(path: str, song_name: str, playlist_id: str, file):
     """ Downloads audio streams from YouTube and writes results into Log file.
 
     Downloads mp4 file named as song_name into a folder named as playlist_id.
@@ -119,18 +119,18 @@ def download_song(file_path: str, song_name: str):
     """
 
     downloaded_file_name = f'{song_name}.mp4'
-    if not os.path.exists(f'{file_path}/{downloaded_file_name}'):
-        with open(f'{file_path}/log.txt', mode='a', encoding='UTF-8') as file:
+    if not os.path.exists(f'{path}/{downloaded_file_name}'):
+
             file.write(f'{datetime.utcnow().isoformat(" ", "seconds")} UTC\n')
 
             try:
                 # Get url of the first video in search with song_name and download its max quality audio stream.
                 youtube = YouTube(get_song_url(song_name))
                 audio_stream = youtube.streams.get_audio_only()
-                audio_stream.download(filename=downloaded_file_name, output_path=file_path)
+                audio_stream.download(filename=downloaded_file_name, output_path=path)
                 file.write(f'{downloaded_file_name} downloaded!\n')
                 # Update metadata of file such as artist name and song name.
-                update_metadata(file_path=f'{file_path}/{downloaded_file_name}',
+                update_metadata(file_path=f'{path}/{downloaded_file_name}',
                                 artist=song_name.split('-')[0],
                                 song_name=song_name.split('-')[1])
             except Exception as error:
@@ -152,7 +152,8 @@ def start_download_operation(playlist_id: str, playlist_type: str):
     os.makedirs(files_path, exist_ok=True)
     os.makedirs(archive_path, exist_ok=True)
     print('Commence of downloading operation.')
-    for song in final_songs_list:
-        download_song(files_path, song)
+    with open(f'{files_path}/log.txt', mode='a', encoding='UTF-8') as file:
+        for song in final_songs_list:
+            download_song(files_path, song, playlist_id, file)
     print('Operation completed!')
     create_zipfile(name=playlist_id)

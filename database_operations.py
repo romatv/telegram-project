@@ -259,7 +259,7 @@ def initialize_user_operation(get_data, modify_data, chat_id) -> bool:
 
 @modify_only_connection_handler
 def add_total_downloads(modify_data, chat_id):
-    """Adds + 1 to database columns (downloads) and (total_downloads)."""
+    """Adds + 1 to database column total_downloads."""
 
     modify_data.add_total_downloads()
 
