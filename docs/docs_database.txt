@@ -42,7 +42,8 @@ At start:
    than 0 days, user is still restricted.
    if it is 0, user can proceed to download and his downloads and restriction date are cleared.
 
-After downloading completed and file is sent:
+Before downloading starts:
+   If user has active restriction date: send restriction message.
    Add downloads +1 and check if user has reached its limit, and his downloads = 2 now.
    If yes, adds restriction date, which is today UTC date.
-   Then creates restriction message and sends it to bot.
+   Then start downloading operation.
