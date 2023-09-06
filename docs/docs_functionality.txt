@@ -60,7 +60,7 @@ After that the file is sent to the chat.
 
 
 
-NOTES AND USAGES OF LIBRARIES:
+NOTES AND USAGE OF LIBRARIES:
 
 1. dotenv
 
@@ -183,6 +183,9 @@ NOTES AND USAGES OF LIBRARIES:
     https://www.pythonanywhere.com/user/Your_username/databases/
     https://help.pythonanywhere.com/pages/AccessingMySQLFromOutsidePythonAnywhere/
 
+    In the script connection is created once sent link is validated, and closed after completion
+    of downloading operation, or in case no operations occured due to limitations.
+
 
 
 
@@ -190,3 +193,4 @@ NOTES AND USAGES OF LIBRARIES:
 Infinity Polling.
 This telebot function creates a new Thread and allows the bot to retrieve
 Updates automatically and notify listeners and message handlers accordingly.
+It automatically manages to create new threads for simultaneusly incoming messages.

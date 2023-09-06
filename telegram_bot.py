@@ -4,26 +4,13 @@ import re
 import telebot
 
 from downloader import start_download_operation, delete_files
-from database_operations import (initialize_user_operation, add_total_downloads, is_limit_reached,
+from database_operations import (connect_to_database, close_connection, initialize_user_operation,
+                                 add_total_downloads, is_limit_reached,
                                  find_restriction_date, restriction_message_creator)
 from telegram_bot_messages import my_messages
 
-# load_dotenv() function is called while importing first functions from downloader
-# so no need to call it again.
+
 TELEBOT_API_TOKEN = os.getenv('TELEBOT_API_TOKEN')
-
-# When using local telegram bot api server, include next parameters to run all
-# functions through server's IP:
-# from telebot import apihelper
-# apihelper.API_URL = 'http://0.0.0.0:8081/bot{0}/{1}'
-# apihelper.FILE_URL = 'http://0.0.0.0:8081'
-# print(apihelper.API_URL)
-#
-# Incldue next function to log out from bot, before switching between servers.
-# def log_out_function():
-#     return bot.log_out()
-# additional info on server is in docs/docs_server.txt
-
 bot = telebot.TeleBot(TELEBOT_API_TOKEN)
 
 
@@ -55,9 +42,8 @@ def send_help_message(message):
 def handle_messages(message):
     """ Handles any onther message sent by user
 
-    If the message is correct url link, starts downloading songs and sends zip file to user
+    If the message is correct url link, starts downloading songs and sends zip file to user.
     """
-
     chat_id = message.chat.id
     print('Initialized process with chat_id: ', chat_id)
     if message.entities:
@@ -70,10 +56,11 @@ def handle_messages(message):
                 playlist_type = match.group(1)
                 playlist_id = match.group(2)
                 bot.send_message(chat_id, my_messages['initialize_message'])
-                if initialize_user_operation(chat_id=chat_id):
+                conn = connect_to_database()  # returns list-> [connection, tunnel, cursor()]
+                if initialize_user_operation(connection=conn, chat_id=chat_id):
                     try:
-                        add_total_downloads(chat_id=chat_id)
-                        is_limit_reached(chat_id=chat_id)
+                        add_total_downloads(connection=conn, chat_id=chat_id)
+                        is_limit_reached(connection=conn, chat_id=chat_id)
 
                         start_download_operation(playlist_id, playlist_type)
 
@@ -87,22 +74,23 @@ def handle_messages(message):
                         bot.send_message(chat_id, my_messages['file_error_message'])
                     finally:
                         delete_files(playlist_id)
+                        close_connection(connection=conn)
                 else:
-                    restriction_date = find_restriction_date(chat_id=chat_id)
+                    restriction_date = find_restriction_date(connection=conn, chat_id=chat_id)
                     restriction_message = restriction_message_creator(username=message.chat.username,
                                                                       restriction_date=restriction_date,
                                                                       message_body=my_messages['restriction_message'])
                     bot.reply_to(message, restriction_message)
+                    close_connection(connection=conn)
             else:
                 bot.send_message(chat_id, my_messages['error_incorrect_link_message'])
         elif len(url_entities) > 1:
             bot.send_message(chat_id, my_messages['error_one_link_message'])
     else:
         bot.send_message(chat_id, my_messages['error_no_link_message'])
-    print('Ended of process with chat_id: ', chat_id)
+    print('End of process with chat_id: ', chat_id)
 
 
 if __name__ == '__main__':
-    # bot.log_out()
     bot.infinity_polling()
 
