@@ -7,12 +7,9 @@
 This telegram bot offers way to download songs from Spotify playlists.
 Downloads are limited to 2 per every-week.
 
-Pending issues:
-- Maximum file size is 50 mb. Either have to host server to start telegram bot api server,
-or find other way.
-- This is not async version, so it can't wait for first request to finish, before starting
-to execute next request. So this project is not in production yet.
-- There should be some limit to reduce risk of too much msgs sent.
+Limits:
+- Maximum file size is 50 mb on project without running local telegram-bot-api server.
+- Program can't get dynamic playlists data, as it requires user authentification for it.
 
 --------------------------------------------------------------------------------
 
@@ -83,13 +80,11 @@ docs_general.txt         - general project documentation.
 docs_functionality.txt   - documentation on usage of libraries and functions.
 docs_database.txt        - documentation on database management.
 docs_server.txt          - documentation on starting local server on remote hosting.
+.emv.example             - example of .env file requried for program.
 requirements.txt         - pip requirements file.
 
 --------------------------------------------------------------------------------
 
 
 Tasks to complete:
-- delete files if download was unsuccessful or broken infinity polling.
-- name playlist file as actual playlist name.
-- add protection from too many messages sent.
 - add protection from infinite playlists. Maybe limit the playlist size.

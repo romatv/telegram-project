@@ -1,12 +1,15 @@
 welcome_message = 'Welcome to Spotygo Bot!\n' \
                   'This bot allows you to download your favourite Spotify playlist in just a couple clicks!\n\n' \
                   'To start - send me a link to your Spotify Playlist!\n\n' \
+                  'Note: you can\'t download Dynamic playlists like "Top 50 songs for you" because of security reasons. \n\n' \
                   'If you have any questions type /help'
 
 help_message = 'Welcome to Spotygo Bot!\n' \
                'This Help section will answer some of your common questions.\n\n' \
                '1. What playlists can I download?\n' \
-               'Any Spotify playlist which is not hidden from public.\n\n' \
+               'Any Spotify playlist which is not hidden from public.\n' \
+               'Dynamic playlists like "Top 50 songs for you" are not available,\n' \
+               'because Spotify services require your authorization for getting these playlists data.\n' \
                '2. How to start?\n' \
                'To initiate the process just send SpotyGo the link to your playlist.\n' \
                'The link should look like this https://open.spotify.com/...\n\n' \

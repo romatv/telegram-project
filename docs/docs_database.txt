@@ -16,23 +16,13 @@ Then actual functions created to perform combinations of db operations required 
 Three decorators are created to wrap these functions, depending on whether they need to only
 get data, only modify data or both.
 
-These decorators do next:
-0. Takes function as parameter.
-1. Initialize connection.
-2. Create connection, tunnel and cursor objects.
-3. Create instance of required class (GetDataoperations or ModifyDataOperations, or both).
-4. Pass objects and chat_id to these instances.
-5. Then creates try - except - finally block.
-6. Pass instances of class to the wrapped function.
-7. Tries to return decorated function
-8. Catches exceptions if any.
-9. Finally, closes cursor, connection and tunnel.
-10. Returnes wrapper.
-
-This ensures that ssh tunnel, connection and cursor are opened separately for a function,
-and they are closed after function executed. Therefore, it helps to mitigate the risk of too
-many open connections.
-
+These decorators have next logic:
+0. Take function as decorator parameter. Define wrapper function.
+1. Wrapper takes function's connection parameter, which is a list of 3 objects [connection, tunnel, cursor()].
+2. It creates instance of required class (GetDataoperations or ModifyDataOperations, or both).
+3. It passes instances of class to the decorated function and tries to return it.
+4. It catches exceptions if any.
+5. Return wrapper.
 
 At start:
 1. When url is sent into chat, initialize_user_operation function is called.
@@ -47,3 +37,13 @@ Before downloading starts:
    Add downloads +1 and check if user has reached its limit, and his downloads = 2 now.
    If yes, adds restriction date, which is today UTC date.
    Then start downloading operation.
+
+Next is a database table 'users' columns information:
++---------------------+--------+------+-----+---------+-------+
+| Field               | Type   | Null | Key | Default | Extra |
++---------------------+--------+------+-----+---------+-------+
+| chat_id             | bigint | NO   | PRI | NULL    |       |
+| downloads           | int    | YES  |     | 0       |       |
+| date_of_restriction | date   | YES  |     | NULL    |       |
+| total_downloads     | int    | YES  |     | 0       |       |
++---------------------+--------+------+-----+---------+-------+

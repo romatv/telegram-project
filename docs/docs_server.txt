@@ -82,9 +82,9 @@ $ make install
 or make install prefix=$HOME/.local if first doesn't work.
 
 8. You can check if it's installed by running
-$ grepf --version
+$ gperf --version
 or
-$ which grepf
+$ which gperf
 
 9. Add next line to .bashrc configuration file of bash console to set PATH,
 that will be ready each time bash console is activated:
